@@ -36,24 +36,25 @@ db.on("open", function () {
                         var cBody = comments[i]["data"]["body"];
                         if (cBody && cBody.match(regex)) {
                             var comment = result.data.children[i].data;
-                            Comment.update({_id : comment.name}, {$set:{body : comment.body}}, {upsert:true}, function (err) {
-                                if (err) {console.log(err);}
-                            });
+                            (function (comment) {
+                                Comment.findOne({_id:comment.name}, function (err, doc) {
+                                    if (doc) {
+                                        Comment.update({_id : comment.name}, {$set:{body : comment.body}}, {upsert:true}, function (err) {
+                                            if (err) {console.log(err);}
+                                        });
+                                    } else {
+                                        new Comment({
+                                            _id : comment.name,
+                                            body : comment.body
+                                        }).save();
+                                    }
+                                });
+                            })(comment);
                         }
                     }
                 }
             });
         },5000);
-        //reddit('/user/ki85squared/comments.json').get().then(function(result) {
-        //    console.log(result.data.children[0]);
-        //    if (result.hasOwnProperty("data") && result.data.hasOwnProperty("children")) {
-        //        var comment = result.data.children[0].data;
-        //        // TODO: Check body to see if it was already replied to, but later edited.
-        //        Comment.update({_id : comment.name}, {$set:{body : comment.body}}, {upsert:true}, function (err) {
-        //            if (err) {console.log(err);}
-        //        });
-        //    }
-        //});
     });
 
     var throttle = 0; // throttle is used to churn through queue.
