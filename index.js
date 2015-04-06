@@ -25,7 +25,7 @@ db.on("open", function () {
     reddit.auth().then(function() {
         setInterval(function () {
             reddit('/r/all/comments.json').get().then(function(result) {
-                console.log("Scanned " + result.data.children.length + " comments");
+                //console.log("Scanned " + result.data.children.length + " comments");
                 if (result.hasOwnProperty("data") && result.data.hasOwnProperty("children")) {
                     var comments = result.data.children;
                     for (var i=0; i<comments.length; i++) {
@@ -54,7 +54,7 @@ db.on("open", function () {
                     }
                 }
             });
-        },5000);
+        },5000); // Grab new comments every 5 seconds
     });
 
     var throttle = 0; // throttle is used to churn through queue.
