@@ -1,0 +1,15 @@
+{
+  "name": "headonbot",
+  "version": "1.0.0",
+  "description": "Another reddit bot",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "mongoose": "^4.0.1",
+    "snoocore": "^2.7.4"
+  }
+}
