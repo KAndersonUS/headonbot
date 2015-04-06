@@ -8,7 +8,7 @@ var db = mongoose.connection;
 db.on("open", function () {
     var Snoocore = require("snoocore");
     var reddit = new Snoocore({
-        userAgent: 'snoocore:headonbot:v0.0.1 by /u/ki85squared',
+        userAgent: 'snoocore:headonbot:v0.1.0 by /u/ki85squared',
         login: { username: config.reddit.username, password: config.reddit.password },
         oauth: {
             type: 'script',

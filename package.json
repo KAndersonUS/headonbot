@@ -1,12 +1,12 @@
 {
   "name": "headonbot",
-  "version": "1.0.0",
-  "description": "Another reddit bot",
+  "version": "0.1.0",
+  "description": "A bot that replies with \"Apply directly to the forehead!\" to any comment that ends with a form of \"Head On\"",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
+  "author": "Kyle Anderson <mail@kyleanderson.us>",
   "license": "ISC",
   "dependencies": {
     "mongoose": "^4.0.1",
