@@ -2,7 +2,7 @@
   "name": "headonbot",
   "version": "0.1.0",
   "description": "A bot that replies with \"Apply directly to the forehead!\" to any comment that ends with a form of \"Head On\"",
-  "main": "index.js",
+  "main": "headonbot.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

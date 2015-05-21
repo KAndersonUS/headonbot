@@ -1,3 +1,4 @@
+var fs = require("fs");
 var config = require("./config.js");
 var mongoose = require("mongoose");
 require("./schema.js");
@@ -23,6 +24,26 @@ db.on("open", function () {
 
     // Grab comments here //
     reddit.auth().then(function() {
+        onAuthHandler();
+    }).catch(function (err) {
+        console.log(err);
+    });
+
+    reddit.on("access_token_expired", function (err) {
+        restart(err);
+    });
+
+    function restart (err) {
+        // "restart" technically is exit, but forever will re-run after exit
+        var message = new Buffer((new Date().toString() + " | " + err));
+        console.log(message.toString());
+        fs.writeFileSync("./auth_err.log", message);
+        setTimeout(function () {
+            process.exit(1);
+        }, 10000); // wait 10 sec to quit if auth fails
+    }
+
+    function onAuthHandler () {
         setInterval(function () {
             reddit('/r/all/comments.json').get().then(function(result) {
                 //console.log("Scanned " + result.data.children.length + " comments");
@@ -54,33 +75,34 @@ db.on("open", function () {
                     }
                 }
             });
-        },5000); // Grab new comments every 5 seconds
-    });
+        },3000); // Grab new comments every 3 seconds
 
-    var throttle = 0; // throttle is used to churn through queue.
-    var throttleInterval = 10000; // check queue every ten seconds
-    // Counts down the throttle //
-    setInterval(function () {
-        switch (throttle) {
-            case (throttle > throttleInterval):
-                throttle -= throttleInterval;
-                break;
-            default:
-                throttle = 0;
-                // time to post, if there are any in the queue
-                Comment.find({replied:false}).sort({capturedDate:-1}).limit(1).exec(function (err, result) {
-                    if (err) { console.log(err); }
-                    else {
-                        if (result.length > 0) {
-                            postComment(result[0]._id, function (err) {
-                                if (err) { console.dir(err); }
-                            });
-                            throttle = 300000; // reset to 5 mins after each comment posting attempt
+        var throttle = 0; // throttle is used to churn through queue.
+        var throttleInterval = 10000; // check queue every ten seconds
+        // Counts down the throttle //
+        setInterval(function () {
+            switch (throttle) {
+                case (throttle > throttleInterval):
+                    throttle -= throttleInterval;
+                    break;
+                default:
+                    throttle = 0;
+                    // time to post, if there are any in the queue
+                    Comment.find({replied:false}).sort({capturedDate:-1}).limit(1).exec(function (err, result) {
+                        if (err) { console.log(err); }
+                        else {
+                            if (result.length > 0) {
+                                postComment(result[0]._id, function (err) {
+                                    if (err) { console.dir(err); }
+                                });
+                                throttle = 300000; // reset to 5 mins after each comment posting attempt
+                            }
                         }
-                    }
-                });
-        }
-    }, throttleInterval);
+                    });
+            }
+        }, throttleInterval);
+    }
+
 
     // Posts the comment //
     function postComment (commentId, cb) {
