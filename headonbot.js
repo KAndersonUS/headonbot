@@ -20,7 +20,7 @@ db.on("open", function () {
     });
 
     var message = "[Apply directly to the forehead!](https://www.youtube.com/watch?v=f_SwD7RveNE)";
-    var regex = /(?:headon|head[\s|-]on)[^a-zA-Z0-9\s\:]*$/i;
+    var regex = /\s(?:headon|head[\s-]on)[^a-zA-Z0-9]*$/i;
 
     // Grab comments here //
     reddit.auth().then(function() {
